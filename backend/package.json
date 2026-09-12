@@ -1,0 +1,15 @@
+{
+  "name": "foodie-express-backend",
+  "version": "2.0.0",
+  "private": true,
+  "description": "FOODIE-EXPRESS REST API — Backend for Mobile JavaScript App Development (Dr. Sheena Christabel Pravin, VIT Chennai)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

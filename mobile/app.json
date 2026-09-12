@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Foodie Express",
+    "slug": "foodie-express",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "edu.vitchennai.foodieexpress",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#B42901"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-status-bar"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "cd06aa11-7ad6-4188-9c2d-2ff458f73548"
+      }
+    }
+  }
+}
