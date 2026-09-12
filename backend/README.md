@@ -1,121 +1,71 @@
-# FOODIE-EXPRESS — Backend REST API
+# 🍔 FOODIE-EXPRESS — Backend REST API
 
-Node.js and Express REST API backend for the **Foodie-Express** mobile food delivery system.
+> 🚀 **Node.js + Express REST API backend** for the Foodie-Express mobile food delivery application.
 
-Designed for the **Mobile JavaScript App Development** course (Dr. Sheena Christabel Pravin, VIT Chennai), this server provides endpoints for authentication, restaurant catalogs, dynamic menus, cart operations, coupons, order placement, and live order tracking.
+Foodie-Express is a full-stack food delivery system developed for the **Mobile JavaScript App Development** course at **VIT Chennai**.
 
----
+The backend provides RESTful APIs for:
 
-## Setup & Running
-
-```bash
-cd backend
-npm install
-npm start
-```
-
-Runs on **`http://localhost:3001`**.
-
-To run with automatic file reload during development:
-```bash
-npm run dev
-```
+- 🔐 Authentication & OTP verification
+- 👤 User profiles & saved addresses
+- 🍕 Restaurant catalogues & menus
+- 🔎 Search & filtering
+- 🛒 Cart management
+- 🎟️ Coupon application
+- 📦 Order placement
+- 👨‍🍳 Kitchen order processing
+- 🛵 Live delivery tracking
 
 ---
 
-## Architecture & Design Patterns
+## ✨ Features
 
-The backend strictly separates routing, controller handling, and business domain logic:
+| Feature | Description |
+|---|---|
+| 🔐 **Authentication** | Phone-based OTP authentication and session management |
+| 👤 **User Management** | Profile information and saved delivery addresses |
+| 🍽️ **Restaurants** | Restaurant details, ratings, distance and delivery information |
+| 📋 **Menus** | Category-wise restaurant menus and dish information |
+| 🔎 **Search** | Search restaurants and dishes using multiple filters |
+| 🛒 **Cart** | Add, update and remove cart items |
+| 🎟️ **Coupons** | Support for `WELCOME40` and `TRYNEW` |
+| 📦 **Orders** | Order validation and placement |
+| 👨‍🍳 **Kitchen Pipeline** | Sequential order processing stages |
+| 🛵 **Tracking** | Rider telemetry, ETA and delivery status |
+| ⚠️ **Exception Handling** | Custom `InvalidOrderException` with reason codes |
+| 🌐 **CORS** | Configured for mobile application communication |
 
-```
+---
+
+# 🏗️ Architecture
+
+The backend follows a **separation-of-concerns architecture**, keeping routing, controllers, services and data repositories independent.
+
+```text
 backend/
-├── server.js                        # HTTP listener
+│
+├── server.js                         # HTTP server entrypoint
+│
 └── src/
-    ├── app.js                       # Express configuration, CORS, routes
+    │
+    ├── app.js                        # Express configuration & routes
+    │
+    ├── controllers/                  # HTTP request/response handlers
+    │
+    ├── routes/                       # Modular Express route definitions
+    │
+    ├── services/                     # Business/domain logic
+    │   ├── validateOrder.js          # Order validation
+    │   ├── orderProcessor.js         # Kitchen & delivery pipeline
+    │   ├── cart.service.js           # Cart & coupon operations
+    │   ├── restaurant.service.js     # Restaurant queries
+    │   ├── search.service.js         # Search & filtering
+    │   └── auth.service.js           # OTP/session management
+    │
+    ├── data/                         # In-memory datasets
+    │
     ├── errors/
-    │   └── InvalidOrderException.js # Custom Exception class with reasonCode (Sheet 04)
-    ├── services/
-    │   ├── validateOrder.js         # Order validation logic (throws InvalidOrderException)
-    │   ├── orderProcessor.js        # Stage pipeline & rider telemetry simulation (Sheet 05)
-    │   ├── cart.service.js          # Cart item storage and coupon calculation
-    │   ├── restaurant.service.js    # Restaurant catalog queries & filters
-    │   ├── search.service.js        # Multi-attribute search across cuisines & dishes
-    │   └── auth.service.js          # In-memory OTP session manager
-    ├── controllers/                 # Express request/response controllers
-    ├── routes/                      # Modular Express router definitions
-    ├── data/                        # In-memory seed datasets (Napoli Pizza, Burger Craft, etc.)
+    │   └── InvalidOrderException.js  # Custom exception class
+    │
     └── middleware/
-        └── error.middleware.js      # Global error handler translating exceptions to JSON
-```
-
----
-
-## API Endpoints Reference
-
-### Health & Root
-| Method | Route | Description |
-|---|---|---|
-| `GET` | `/health` | Server heartbeat status (`{"status":"ok"}`) |
-| `GET` | `/` | API capability index and available endpoints |
-
-### Authentication
-| Method | Route | Request Body | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/send-otp` | `{ "phone": "9876543210" }` | Generates a 6-digit OTP (demo: `123456`) |
-| `POST` | `/api/auth/verify-otp` | `{ "phone": "9876543210", "otp": "123456" }` | Verifies OTP and returns user profile |
-| `POST` | `/api/auth/logout` | — | Invalidates active user session |
-
-### User Profile
-| Method | Route | Request Body | Description |
-|---|---|---|---|
-| `GET` | `/api/users/me` | — | Returns current user profile and saved addresses |
-| `PATCH` | `/api/users/me` | `{ "name": "...", "email": "..." }` | Updates user details |
-| `POST` | `/api/users/addresses` | `{ "title": "Home", "addressLine": "..." }` | Adds a saved delivery address |
-
-### Restaurants & Cuisines
-| Method | Route | Description |
-|---|---|---|
-| `GET` | `/api/restaurants` | List all restaurants with ratings, distance, delivery times |
-| `GET` | `/api/restaurants/:id` | Get individual restaurant details |
-| `GET` | `/api/restaurants/:id/menu` | Get full category-wise dish menu for a restaurant |
-| `GET` | `/api/cuisines` | List popular cuisine categories (Pizza, Burgers, Biryani, etc.) |
-
-### Search
-| Method | Route | Query Parameters | Description |
-|---|---|---|---|
-| `GET` | `/api/search` | `?q=pizza&dietary=veg&minRating=4.0` | Search dishes and restaurants by name, category, or dietary tag |
-
-### Cart Management
-| Method | Route | Request Body | Description |
-|---|---|---|---|
-| `GET` | `/api/cart` | — | Current cart items, item count, subtotal, and discount |
-| `POST` | `/api/cart/items` | `{ "dishId": 101, "qty": 1, "restaurantId": 1 }` | Add item or increment quantity |
-| `PATCH` | `/api/cart/items/:id` | `{ "qty": 2 }` | Update quantity |
-| `DELETE` | `/api/cart/items/:id` | — | Remove item from cart |
-| `POST` | `/api/cart/coupon` | `{ "code": "WELCOME40" }` | Apply discount coupon (`WELCOME40` or `TRYNEW`) |
-
-### Orders & Tracking
-| Method | Route | Request Body | Description |
-|---|---|---|---|
-| `POST` | `/api/orders` | `{ "restaurantId": 1, "items": [...] }` | Validates & places order. Returns 201 or 400 on error |
-| `GET` | `/api/orders` | — | List past and active orders |
-| `GET` | `/api/orders/:id` | — | Retrieve order summary and status |
-| `GET` | `/api/orders/:id/tracking` | — | Live stage timeline, rider coordinates, and ETA |
-
----
-
-## Course Concept Implementation
-
-### 1. Custom Exception Handling (`InvalidOrderException`)
-Defined in `src/errors/InvalidOrderException.js`. Throws with a specific `reasonCode`:
-```json
-{
-  "error": "Cart is empty. Please add at least one item.",
-  "reasonCode": "EMPTY_CART"
-}
-```
-
-### 2. Async Kitchen Stage Pipeline
-Orders advance through the sequential stages:
-`placed` → `validated` → `cooking` → `ready` → `delivering` → `delivered`
-Each transition records timestamps in the `history` array and computes dynamic delivery partner telemetry.
+        └── error.middleware.js        # Global error handling
